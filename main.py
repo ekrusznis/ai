@@ -1,3 +1,5 @@
+import string
+
 import pyttsx3  # converts text to speech
 import datetime  # required to resolve any query regarding date and time
 import speech_recognition as sr  # required to return a string output by taking microphone input from the user
@@ -6,10 +8,14 @@ import webbrowser  # required to open the prompted application in web browser
 import os.path  # required to fetch the contents from the specified folder/directory
 import smtplib  # required to work with queries regarding e-mail
 from search_engines import Google, Bing, Duckduckgo
+from utils.sigmoid import stable_sigmoid as sig
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
+
+bot_name = "Cortana"
+
 
 # TODO: 1. integrate deepvoice so we can create voice 'profiles' with testing data provided from audio files to
 #          customize the voice.
@@ -35,7 +41,7 @@ def wish_me():  # function to wish the user according to the daytime
     else:
         speak('Good Evening')
 
-    speak('Hello Sir, I am Cortana, Please tell me how may I help you')
+    speak("Hello, I am " + bot_name + ", What can I do for you?")
 
 
 def take_command():  # function to take an audio input from the user
@@ -49,8 +55,7 @@ def take_command():  # function to take an audio input from the user
         print('Recognizing...')
         query = r.recognize_google(audio, language='en-US')  # using google for voice recognition
         print(f'User said: {query}\n')
-
-    except Exception as e:
+    except ValueError as v:
         print('Hmm, I will have to learn that...')
         return 'None'
 
@@ -66,11 +71,22 @@ def send_email(to, content):  # function to send email
     server.close()
 
 
+def get_sigmoid(number):  # function to send email
+    answer = "I am not sure, I will need to ponder this"
+    try:
+        answer = sig(number)
+    except ValueError as v:
+        print(v)
+        speak(answer)
+
+    speak(answer)
+
+
 def learn_something_new(question):
     search_browser1 = Google()
     search_browser2 = Bing()
     search_browser3 = Duckduckgo()
-    result_of_search_1 = search_browser1.search(question)
+    result_of_search_1 = search_browser1.search(question).links().index(0)
     result_of_search_2 = search_browser2.search(question)
     result_of_search_3 = search_browser3.search(question)
     links1 = result_of_search_1.links()
@@ -91,6 +107,9 @@ if __name__ == '__main__':  # execution control
         if 'open youtube' in query:
             webbrowser.open('youtube.com')
 
+        if 'what is your name' in query:
+            speak("My name is " + bot_name)
+
         elif 'wikipedia' in query:
             try:
                 speak('Searching Wikipedia....')
@@ -104,6 +123,19 @@ if __name__ == '__main__':  # execution control
 
         elif 'open google' in query:
             webbrowser.open('google.com')
+
+        elif 'very good' in query:
+            speak('Thank you')
+
+        elif 'get sigmoid' in query:
+            try:
+                query = query.find(string.digits)
+                results = sig(query)
+                print(results)
+                speak(results)
+            except Exception as e:
+                print(e)
+                speak('Sorry, I am not sure, I will need to look into this')
 
         elif 'play music' in query:
             speak('okay boss')
@@ -133,3 +165,6 @@ if __name__ == '__main__':  # execution control
         elif 'exit' in query:
             speak('okay boss, please call me when you need me')
             quit()
+
+        else:
+            learn_something_new(query)
