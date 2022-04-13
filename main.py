@@ -9,12 +9,14 @@ import os.path  # required to fetch the contents from the specified folder/direc
 import smtplib  # required to work with queries regarding e-mail
 from search_engines import Google, Bing, Duckduckgo
 from utils.sigmoid import stable_sigmoid as sig
+import requests
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
 bot_name = "Cortana"
+my_name = "Eric"
 
 
 # TODO: 1. integrate deepvoice so we can create voice 'profiles' with testing data provided from audio files to
@@ -34,14 +36,30 @@ def wish_me():  # function to wish the user according to the daytime
     hour = int(datetime.datetime.now().hour)
     if 0 <= hour < 12:
         speak('Good Morning')
-
     elif 12 < hour < 18:
         speak('Good Afternoon')
-
     else:
         speak('Good Evening')
-
     speak("Hello, I am " + bot_name + ", What can I do for you?")
+
+
+def run_api(url, method, request):
+    response = string
+
+    if "get" in method:
+        response = requests.get(url)
+        print(response.json())
+    elif "post" in method:
+        response = requests.post(url, request)
+        print(response.json())
+    elif "patch" in method:
+        response = requests.patch(url, json=request)
+        print(response.json())
+    elif "delete" in method:
+        response = requests.delete(url)
+        print(response.json())
+
+    speak("Received response from " + method + "call to " + url + ", status code is " + response.status_code)
 
 
 def take_command():  # function to take an audio input from the user
@@ -100,9 +118,7 @@ def learn_something_new(question):
 if __name__ == '__main__':  # execution control
     wish_me()
     while True:
-        query = take_command().lower()  # converts user asked query into lower case
-
-        # The whole logic for execution of tasks based on user asked query
+        query = take_command().lower()
 
         if 'open youtube' in query:
             webbrowser.open('youtube.com')
