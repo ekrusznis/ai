@@ -1,0 +1,12 @@
+# dataset for weighing emotional responsiveness
+Gender,Age,Weight,Positive
+Female,62,3.3,Yes
+Female,65,3.2,Yes
+Female,45,3.1,No
+Male,40,4.1,No
+Male,50,,Yes
+Female,55,3.3,No
+Male,,3.6,Yes
+Male,67,3.8,Yes
+Male,75,3,No
+Female,64,3.4,Yes
