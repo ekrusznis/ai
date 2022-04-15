@@ -18,7 +18,6 @@ engine.setProperty('voice', voices[1].id)
 bot_name = "Cortana"
 my_name = "Eric"
 
-
 # TODO: 1. integrate deepvoice so we can create voice 'profiles' with testing data provided from audio files to
 #          customize the voice.
 #       2. update the learn_something_new to scrape the TOP 3 search results from the engines.
